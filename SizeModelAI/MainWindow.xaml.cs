@@ -1,11 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using System.Threading.Tasks;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using OpenCvSharp.WpfExtensions;
+using Newtonsoft.Json.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SizeModelAI
 {
@@ -105,5 +110,95 @@ namespace SizeModelAI
 				image.Dispose();
 			}
 		}
+
+		private async void LoadImageAI_Click(object sender, RoutedEventArgs e)
+{
+    var openFileDialog = new OpenFileDialog();
+    openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
+
+    if (openFileDialog.ShowDialog() == true)
+    {
+        string filePath = openFileDialog.FileName;
+        byte[] imageData = File.ReadAllBytes(filePath);
+
+        // Convert image data to base64
+        string base64Image = Convert.ToBase64String(imageData);
+
+        // Determine the selected question from the ComboBox
+        string selectedQuestion = questionComboBox.SelectedItem.ToString();
+        string questionText = selectedQuestion;
+
+				
+				// Create JSON request
+				string jsonRequest = @"{
+            ""contents"":[
+                {
+                    ""parts"":[
+                        {""text"": """ + questionText + @"""},
+                        {
+                            ""inline_data"": {
+                                ""mime_type"":""image/jpeg"",
+                                ""data"": """ + base64Image + @"""
+                            }
+                        }
+                    ]
+                }
+            ]
+        }";
+
+        // Send request to API
+        string apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=AIzaSyArVfvy9rHMaUh7_nOwkruwRTGh8abbQJY";
+        using (var httpClient = new HttpClient())
+        {
+            try
+            {
+						string result= "";
+                var response = await httpClient.PostAsync(apiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+                response.EnsureSuccessStatusCode();
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+					
+						//MessageBox.Show("Result: " + responseBody);
+
+						// Phân tích JSON
+						JObject jsonResponse = JObject.Parse(responseBody);
+
+						// Lấy danh sách các ứng viên từ JSON
+						JArray candidates = (JArray)jsonResponse["candidates"];
+
+						// Lặp qua từng ứng viên và hiển thị nội dung text
+						foreach (JToken candidate in candidates)
+						{
+							JToken content = candidate["content"];
+							if (content != null)
+							{
+								JArray parts = (JArray)content["parts"];
+								if (parts != null && parts.Count > 0)
+								{
+									foreach (JToken part in parts)
+									{
+										string text = (string)part["text"];
+										if (text != null)
+										{
+											//MessageBox.Show("Descripton about picture: " + text);
+											result = text;
+										}
+									}
+								}
+							}
+						}
+						Mat image = Cv2.ImRead(filePath);
+						BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
+						imageView.Source = bitmapSource;
+						MessageBox.Show("Answer " + result);
+
+					}
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message);
+            }
+        }
+    }
+}
 	}
 }

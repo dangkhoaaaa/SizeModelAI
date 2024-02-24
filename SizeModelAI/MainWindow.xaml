@@ -5,14 +5,23 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Nút để tải hình ảnh -->
-        <Button Grid.Row="0" Width="100" Height="30" Margin="10" Click="LoadImage_Click">Load Image</Button>
+       
+        <!--<Button Grid.Row="0" Width="100" Height="30" Margin="10" Click="LoadImage_Click">Load Image</Button>-->
+        <Button Grid.Row="0" Width="100" Height="30" Margin="10" Click="LoadImageAI_Click">Load Image</Button>
 
-        <!-- Hiển thị hình ảnh -->
-        <Image x:Name="imageView" Grid.Row="1" Margin="10" Stretch="Uniform"/>
       
+        <ComboBox x:Name="questionComboBox" Grid.Row="1" Width="200" Margin="10">
+            <ComboBoxItem>What is this picture?</ComboBoxItem>
+            <ComboBoxItem>How many people are in this picture?</ComboBoxItem>
+            <ComboBoxItem>Predict clothing size for the person in this picture</ComboBoxItem>
+        </ComboBox>
+
+      
+        <Image x:Name="imageView" Grid.Row="2" Margin="10" Stretch="Uniform"/>
+
     </Grid>
 </Window>
