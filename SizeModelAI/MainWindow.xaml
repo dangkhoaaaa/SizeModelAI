@@ -3,25 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Clothing Size Prediction" Height="450" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-       
+
+
         <!--<Button Grid.Row="0" Width="100" Height="30" Margin="10" Click="LoadImage_Click">Load Image</Button>-->
-        <Button Grid.Row="0" Width="100" Height="30" Margin="10" Click="LoadImageAI_Click">Load Image</Button>
+        <Button Grid.Row="0" Width="100" Height="30" Margin="584,394,116,10" Click="LoadImageAI_Click">Load Image</Button>
 
-      
-        <ComboBox x:Name="questionComboBox" Grid.Row="1" Width="200" Margin="10">
+        <Button  Content="Capture" Click="CaptureButton_Click" HorizontalAlignment="Left" Margin="478,330,0,50" Width="312"/>
+
+        <Image  x:Name="imageControl" Stretch="Uniform" HorizontalAlignment="Left" Width="316" Margin="478,90,0,140"/>
+
+
+        <!--<ComboBox x:Name="questionComboBox" Margin="324,23,324,396">
             <ComboBoxItem>What is this picture?</ComboBoxItem>
             <ComboBoxItem>How many people are in this picture?</ComboBoxItem>
             <ComboBoxItem>Predict clothing size for the person in this picture</ComboBoxItem>
-        </ComboBox>
+        </ComboBox>-->
 
-      
-        <Image x:Name="imageView" Grid.Row="2" Margin="10" Stretch="Uniform"/>
+
+        <Image x:Name="imageView" Margin="10,214,430,24" Stretch="Uniform"/>
 
     </Grid>
 </Window>

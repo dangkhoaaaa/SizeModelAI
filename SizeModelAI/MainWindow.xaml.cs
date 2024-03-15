@@ -11,12 +11,17 @@ using OpenCvSharp.Extensions;
 using OpenCvSharp.WpfExtensions;
 using Newtonsoft.Json.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using AForge.Video.DirectShow;
+using AForge.Video;
 
 namespace SizeModelAI
 {
 	public partial class MainWindow : System.Windows.Window
 	{
-		public MainWindow()
+        private VideoCaptureDevice videoCaptureDevice;
+        private string saveFolderPath;
+        private System.Drawing.Bitmap currentFrame;
+        public MainWindow()
 		{
 			InitializeComponent();
 			// Check the existence of the haarcascade_fullbody.xml file
@@ -31,7 +36,8 @@ namespace SizeModelAI
 				string sourceFilePath = Path.Combine(parentDirectory, "haarcascade_fullbody.xml"); // Path to the source file
 				File.Copy(sourceFilePath, cascadeFilePath);
 			}
-		}
+            InitializeWebcam();
+        }
 
 		private void LoadImage_Click(object sender, RoutedEventArgs e)
 		{
@@ -111,6 +117,8 @@ namespace SizeModelAI
 			}
 		}
 
+
+
 		private async void LoadImageAI_Click(object sender, RoutedEventArgs e)
 {
     var openFileDialog = new OpenFileDialog();
@@ -124,81 +132,178 @@ namespace SizeModelAI
         // Convert image data to base64
         string base64Image = Convert.ToBase64String(imageData);
 
-        // Determine the selected question from the ComboBox
-        string selectedQuestion = questionComboBox.SelectedItem.ToString();
-        string questionText = selectedQuestion;
+                CallAPIProcessAsync(base64Image, filePath);
+            }
+}
+        private async Task CallAPIProcessAsync(string base64Image,string filePath)
+        { // Tạo JSON request
+            string questionText = "what is picture,please return this JSON: {   type: Shirt,   " +
+                " style: Casual,    fit: Regular fit,    clothing_color:" +
+                " example[White, Blue, Black, ....],abric_material: Cotton,    sizes: [S, M, L,XL]  }";
 
-				
-				// Create JSON request
-				string jsonRequest = @"{
-            ""contents"":[
+            string jsonRequest = @"{
+                ""contents"":[
+                    {
+                        ""parts"":[
+                            {""text"": """ + questionText + @"""},
+                            {
+                                ""inline_data"": {
+                                    ""mime_type"":""image/jpeg"",
+                                    ""data"": """ + base64Image + @"""
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }";
+
+            string apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=AIzaSyArVfvy9rHMaUh7_nOwkruwRTGh8abbQJY";
+            using (var httpClient = new HttpClient())
+            {
+                try
                 {
-                    ""parts"":[
-                        {""text"": """ + questionText + @"""},
+                    var response = await httpClient.PostAsync(apiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    JObject jsonResponse = JObject.Parse(responseBody);
+                    JArray candidates = (JArray)jsonResponse["candidates"];
+                    string result = "";
+
+                    foreach (JToken candidate in candidates)
+                    {
+                        JToken content = candidate["content"];
+                        if (content != null)
                         {
-                            ""inline_data"": {
-                                ""mime_type"":""image/jpeg"",
-                                ""data"": """ + base64Image + @"""
+                            JArray parts = (JArray)content["parts"];
+                            if (parts != null && parts.Count > 0)
+                            {
+                                foreach (JToken part in parts)
+                                {
+                                    string text = (string)part["text"];
+                                    if (text != null)
+                                    {
+                                        result = text;
+                                    }
+                                }
                             }
                         }
-                    ]
+                    }
+
+                    // Hiển thị kết quả trả về từ API
+                    MessageBox.Show("Answer " + result);
+
+                    // Hiển thị ảnh đã chụp lên giao diện người dùng
+                    Mat image = Cv2.ImRead(filePath);
+                    BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
+                    imageView.Source = bitmapSource;
                 }
-            ]
-        }";
-
-        // Send request to API
-        string apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=AIzaSyArVfvy9rHMaUh7_nOwkruwRTGh8abbQJY";
-        using (var httpClient = new HttpClient())
-        {
-            try
-            {
-						string result= "";
-                var response = await httpClient.PostAsync(apiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
-                response.EnsureSuccessStatusCode();
-
-                string responseBody = await response.Content.ReadAsStringAsync();
-					
-						//MessageBox.Show("Result: " + responseBody);
-
-						// Phân tích JSON
-						JObject jsonResponse = JObject.Parse(responseBody);
-
-						// Lấy danh sách các ứng viên từ JSON
-						JArray candidates = (JArray)jsonResponse["candidates"];
-
-						// Lặp qua từng ứng viên và hiển thị nội dung text
-						foreach (JToken candidate in candidates)
-						{
-							JToken content = candidate["content"];
-							if (content != null)
-							{
-								JArray parts = (JArray)content["parts"];
-								if (parts != null && parts.Count > 0)
-								{
-									foreach (JToken part in parts)
-									{
-										string text = (string)part["text"];
-										if (text != null)
-										{
-											//MessageBox.Show("Descripton about picture: " + text);
-											result = text;
-										}
-									}
-								}
-							}
-						}
-						Mat image = Cv2.ImRead(filePath);
-						BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
-						imageView.Source = bitmapSource;
-						MessageBox.Show("Answer " + result);
-
-					}
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occurred: " + ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred: " + ex.Message);
+                }
             }
         }
+        private void InitializeWebcam()
+        {
+            FilterInfoCollection videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+            if (videoDevices.Count > 0)
+            {
+                videoCaptureDevice = new VideoCaptureDevice(videoDevices[0].MonikerString);
+                videoCaptureDevice.NewFrame += VideoCaptureDevice_NewFrame;
+
+                videoCaptureDevice.Start();
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy webcam.");
+            }
+        }
+
+        private void VideoCaptureDevice_NewFrame(object sender, NewFrameEventArgs eventArgs)
+        {
+            if (currentFrame != null)
+            {
+                currentFrame.Dispose();
+            }
+
+            currentFrame = (System.Drawing.Bitmap)eventArgs.Frame.Clone();
+
+            Dispatcher.Invoke(() =>
+            {
+                BitmapImage bitmapImage = ConvertBitmapToBitmapImage(currentFrame);
+                imageControl.Source = bitmapImage;
+            });
+        }
+
+        private BitmapImage ConvertBitmapToBitmapImage(System.Drawing.Bitmap bitmap)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.StreamSource = memoryStream;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                return bitmapImage;
+            }
+        }
+
+        private void CaptureButton_Click(object sender, RoutedEventArgs e)
+        {
+            CaptureImage();
+        }
+        private string saveFolderPath1 = @"D:\";
+        private async void CaptureImage()
+        {
+            if (videoCaptureDevice != null && videoCaptureDevice.IsRunning)
+            {
+                if (currentFrame != null)
+                {
+                    string fileName = $"image_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+                    string filePath = Path.Combine(saveFolderPath1, fileName);
+
+                    currentFrame.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    MessageBox.Show($"Ảnh đã được chụp và lưu tại {filePath}");
+
+                    // Đọc dữ liệu ảnh đã chụp
+                    byte[] imageData = File.ReadAllBytes(filePath);
+                    string base64Image = Convert.ToBase64String(imageData);
+                    CallAPIProcessAsync(base64Image,filePath);
+                   
+                    
+                }
+            }
+        }
+
+        private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+
+
+
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            if (videoCaptureDevice != null && videoCaptureDevice.IsRunning)
+            {
+                videoCaptureDevice.SignalToStop();
+                videoCaptureDevice.WaitForStop();
+                videoCaptureDevice = null;
+            }
+
+            if (currentFrame != null)
+            {
+                currentFrame.Dispose();
+            }
+
+            base.OnClosing(e);
+        }
     }
-}
-	}
 }
