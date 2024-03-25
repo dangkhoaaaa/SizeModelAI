@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace SizeModelAI.Models;
 
@@ -17,53 +19,48 @@ public partial class ClothingAssigmentContext : DbContext
 
     public virtual DbSet<Clothing> Clothings { get; set; }
 
-    public virtual DbSet<ClothingColor> ClothingColors { get; set; }
-
     public virtual DbSet<ClothingSize> ClothingSizes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(local);Database=ClothingAssigment;Uid=sa;Pwd=12345;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer(GetConnectionString());
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+    private string GetConnectionString()
+    {
+        IConfiguration config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", true, true)
+            .Build();
+        var strConn = config["ConnectionStrings:DefaultConnection"];
+        return strConn;
+    }
+
+
+protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Clothing>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Clothing__3214EC07B7689466");
+            entity.HasKey(e => e.Id).HasName("PK__Clothing__3214EC07E69C633B");
 
             entity.ToTable("Clothing");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Color)
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.FabricMaterial)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Fit)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.Image)
-                .HasMaxLength(255)
-                .IsUnicode(false);
+            entity.Property(e => e.Image).IsUnicode(false);
             entity.Property(e => e.Style)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Type)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<ClothingColor>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToTable("ClothingColor");
-
-            entity.Property(e => e.Color)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.Clothing).WithMany()
-                .HasForeignKey(d => d.ClothingId)
-                .HasConstraintName("FK__ClothingC__Cloth__398D8EEE");
         });
 
         modelBuilder.Entity<ClothingSize>(entity =>
@@ -78,7 +75,7 @@ public partial class ClothingAssigmentContext : DbContext
 
             entity.HasOne(d => d.Clothing).WithMany()
                 .HasForeignKey(d => d.ClothingId)
-                .HasConstraintName("FK__ClothingS__Cloth__3A81B327");
+                .HasConstraintName("FK__ClothingS__Cloth__4AB81AF0");
         });
 
         OnModelCreatingPartial(modelBuilder);

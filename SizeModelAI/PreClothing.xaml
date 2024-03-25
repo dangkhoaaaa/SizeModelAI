@@ -6,7 +6,23 @@
         xmlns:local="clr-namespace:SizeModelAI"
         mc:Ignorable="d"
         Title="PreClothing" Height="450" Width="800">
-    <Grid>
-        
+    <Grid Height="400" VerticalAlignment="Center" >
+        <ListView x:Name="listdata">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" />
+                    <GridViewColumn Header="Style" DisplayMemberBinding="{Binding Style}" />
+                    <!-- Add columns for other properties -->
+                    <GridViewColumn Header="Match Count" DisplayMemberBinding="{Binding MatchCount}" />
+                    <GridViewColumn Header="Image">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Width="100" Height="100" Source="{Binding Image}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

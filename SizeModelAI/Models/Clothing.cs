@@ -15,5 +15,7 @@ public partial class Clothing
 
     public string? FabricMaterial { get; set; }
 
+    public string? Color { get; set; }
+
     public string? Image { get; set; }
 }

@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SizeModelAI
+namespace SizeModelAI.Repo
 {
     public class GenericRepository<TEntity> where TEntity : class
     {
@@ -17,11 +17,11 @@ namespace SizeModelAI
         public GenericRepository(ClothingAssigmentContext context)
         {
             this.context = context;
-            this.dbSet = context.Set<TEntity>();
+            dbSet = context.Set<TEntity>();
         }
 
         public virtual IEnumerable<TEntity> Get(
-             Expression<Func<TEntity, bool>> filter = null,
+            Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "",
             int? pageIndex = null, // Optional parameter for pagination (page number)

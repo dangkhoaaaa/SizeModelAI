@@ -85,4 +85,10 @@
     <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

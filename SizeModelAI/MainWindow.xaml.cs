@@ -14,7 +14,7 @@ using static System.Net.Mime.MediaTypeNames;
 using AForge.Video.DirectShow;
 using AForge.Video;
 using Newtonsoft.Json;
-using SizeModelAI.Models;
+using SizeModelAI;
 
 namespace SizeModelAI
 {
@@ -266,7 +266,7 @@ namespace SizeModelAI
         {
             CaptureImage();
         }
-        private string saveFolderPath1 = @"D:\";
+        private string saveFolderPath1 = @"E:\Image";
         private async void CaptureImage()
         {
             if (videoCaptureDevice != null && videoCaptureDevice.IsRunning)
