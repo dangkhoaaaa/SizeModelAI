@@ -83,6 +83,11 @@
 
   <ItemGroup>
     <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
+    <None Remove="pexels-tembela-bohle-1884584.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="pexels-tembela-bohle-1884584.jpg" />
   </ItemGroup>
 
   <ItemGroup>
