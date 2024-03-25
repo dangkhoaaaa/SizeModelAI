@@ -13,6 +13,8 @@ using Newtonsoft.Json.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using AForge.Video.DirectShow;
 using AForge.Video;
+using Newtonsoft.Json;
+using SizeModelAI.Models;
 
 namespace SizeModelAI
 {
@@ -135,11 +137,13 @@ namespace SizeModelAI
                 CallAPIProcessAsync(base64Image, filePath);
             }
 }
+        //what is picture,please return this JSON: {   \"Type\": \"Shirt\",   " +
+        //        " \"Style\": \"Casual\",    \"Fit\": \"Regular fit\",    \"ClothingColor\":" +
+        //        " example[White, Blue, Black, ....],\"FabricMaterial\": \"Cotton\",    \"Sizes\": [S, M, L,XL]  }
         private async Task CallAPIProcessAsync(string base64Image,string filePath)
         { // Tạo JSON request
-            string questionText = "what is picture,please return this JSON: {   type: Shirt,   " +
-                " style: Casual,    fit: Regular fit,    clothing_color:" +
-                " example[White, Blue, Black, ....],abric_material: Cotton,    sizes: [S, M, L,XL]  }";
+            string questionText = "what is picture,please return this formar " +
+                "{Ojbect-Value} like this {Type:Shirt|Style:Casua|Fit:Regularfit|ClothingColor:White|FabricMaterial:Cotton|Sizes:S}\r\n";
 
             string jsonRequest = @"{
                 ""contents"":[
@@ -194,6 +198,9 @@ namespace SizeModelAI
                     // Hiển thị kết quả trả về từ API
                     MessageBox.Show("Answer " + result);
 
+                   
+                    PreClothing destinationPage = new PreClothing(result);
+                    destinationPage.Show();
                     // Hiển thị ảnh đã chụp lên giao diện người dùng
                     Mat image = Cv2.ImRead(filePath);
                     BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);

@@ -12,6 +12,7 @@
     <PackageReference Include="AForge" Version="2.2.5" />
     <PackageReference Include="AForge.Video" Version="2.2.5" />
     <PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,6 +22,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenCvSharp4" Version="4.9.0.20240103" />
     <PackageReference Include="OpenCvSharp4.Extensions" Version="4.9.0.20240103" />
@@ -28,6 +31,58 @@
     <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.9.0.20240103" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.2" />
     <PackageReference Include="WPFMediaKit" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\DirectShowLib-2005.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\84378\.nuget\packages\wpfmediakit\2.3.0\build\EVRPresenter32.dll" />
   </ItemGroup>
 
 </Project>
