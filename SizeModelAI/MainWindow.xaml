@@ -43,7 +43,7 @@
         </ComboBox>-->
 
 
-        <Image x:Name="imageView" Margin="10,214,430,24" Stretch="Uniform"/>
+        <Image x:Name="imageView" Margin="475,70,207,168" Stretch="Uniform"/>
 
     </Grid>
 </Window>

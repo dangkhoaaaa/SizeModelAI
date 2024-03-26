@@ -40,11 +40,14 @@ namespace SizeModelAI
             foreach (var pair in pairs)
             {
                 string[] keyValue = pair.Split(':');
-                string key = keyValue[0];
+                string key = keyValue[0].Trim();
                 string value = keyValue[1];
 
                 switch (key)
                 {
+                    case "isShirt":
+                        clothing.IsShirt = value;
+                        break;
                     case "Type":
                         clothing.Type = value;
                         break;
@@ -73,7 +76,14 @@ namespace SizeModelAI
             //Console.WriteLine($"ClothingColor: {string.Join(", ", clothing.ClothingColor)}");
             //Console.WriteLine($"FabricMaterial: {clothing.FabricMaterial}");
             //Console.WriteLine($"Sizes: {string.Join(", ", clothing.Sizes)}");
-            ShowClothingInfo(clothing);
+            if (clothing.IsShirt.Equals("Yes"))
+            {
+                ShowClothingInfo(clothing);
+            }
+            else
+            {
+                MessageBox.Show("This is not Shirt");
+            }
         }
 
 
