@@ -10,7 +10,7 @@
 
 
         <!--<Button Grid.Row="0" Width="100" Height="30" Margin="10" Click="LoadImage_Click">Load Image</Button>-->
-        <Button Grid.Row="0" Margin="772,368,57,28" Click="LoadImageAI_Click" FontFamily="Cooper Black" FontSize="16">
+        <Button  Margin="595,355,237,30" Click="LoadImageAI_Click" FontFamily="Cooper Black" FontSize="16">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FF00BAD2" Offset="1"/>
@@ -20,7 +20,7 @@
             </Button.Background> Load Image
         </Button>
 
-        <Button  Content="Capture" Click="CaptureButton_Click" HorizontalAlignment="Left" Margin="400,355,0,25" Width="312" BorderBrush="#FF671700" FontFamily="Cooper Black" FontSize="24" FontStyle="Italic" BorderThickness="1,1,1,1">
+        <Button  Content="Capture" Click="CaptureButton_Click" HorizontalAlignment="Left" Margin="400,355,0,30" Width="190" BorderBrush="#FF671700" FontFamily="Cooper Black" FontSize="24" FontStyle="Italic" BorderThickness="1,1,1,1">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>
