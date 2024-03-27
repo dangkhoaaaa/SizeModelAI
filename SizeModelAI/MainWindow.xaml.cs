@@ -266,7 +266,7 @@ namespace SizeModelAI
         {
             CaptureImage();
         }
-        private string saveFolderPath1 = @"D:\Image";
+        private string saveFolderPath1 = @"E:\Image";
         private async void CaptureImage()
         {
             if (videoCaptureDevice != null && videoCaptureDevice.IsRunning)

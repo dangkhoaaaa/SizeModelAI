@@ -8,6 +8,9 @@
         Title="PreClothing" Height="450" Width="800">
     <Grid Height="400" VerticalAlignment="Center" >
         <ListView x:Name="listdata">
+            <ListView.Background>
+                <ImageBrush/>
+            </ListView.Background>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" />
