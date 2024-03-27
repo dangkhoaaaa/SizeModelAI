@@ -142,8 +142,8 @@ namespace SizeModelAI
         //        " example[White, Blue, Black, ....],\"FabricMaterial\": \"Cotton\",    \"Sizes\": [S, M, L,XL]  }
         private async Task CallAPIProcessAsync(string base64Image,string filePath)
         { // Tạo JSON request
-            string questionText = "what is picture,please return this formar " +
-                "{Ojbect-Value} like this {Type:Shirt|Style:Casua|Fit:Regularfit|ClothingColor:White|FabricMaterial:Cotton|Sizes:S}\r\n";
+            string questionText = "what is picture,please return only this formar " +
+                "  only formar this {isShirt:Yes/No|Type:Shirt|Style:Casua|Fit:Regularfit|ClothingColor:White|FabricMaterial:Cotton|Sizes:S}\r\n";
 
             string jsonRequest = @"{
                 ""contents"":[
@@ -266,7 +266,7 @@ namespace SizeModelAI
         {
             CaptureImage();
         }
-        private string saveFolderPath1 = @"E:\Image";
+        private string saveFolderPath1 = @"D:\Image";
         private async void CaptureImage()
         {
             if (videoCaptureDevice != null && videoCaptureDevice.IsRunning)
