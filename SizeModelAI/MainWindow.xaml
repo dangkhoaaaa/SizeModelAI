@@ -77,7 +77,7 @@
             </StackPanel>
 
             <!-- ListView -->
-            <ListView Grid.Row="1" x:Name="imageListView" FontSize="20">
+            <ListView Grid.Row="1" x:Name="listdata" FontSize="20">
                 <ListView.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF49FF4B"/>

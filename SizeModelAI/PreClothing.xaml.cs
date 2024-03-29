@@ -74,14 +74,6 @@ namespace SizeModelAI
                         break;
                 }
             }
-
-            // In ra thông tin của đối tượng JsonClothing
-            //Console.WriteLine($"Type: {clothing.Type}");
-            //Console.WriteLine($"Style: {clothing.Style}");
-            //Console.WriteLine($"Fit: {clothing.Fit}");
-            //Console.WriteLine($"ClothingColor: {string.Join(", ", clothing.ClothingColor)}");
-            //Console.WriteLine($"FabricMaterial: {clothing.FabricMaterial}");
-            //Console.WriteLine($"Sizes: {string.Join(", ", clothing.Sizes)}");
             if (clothing.IsShirt.Equals("Yes"))
             {
                 ShowClothingInfo(clothing);
@@ -95,31 +87,6 @@ namespace SizeModelAI
 
         private void ShowClothingInfo(JsonClothing obj)
         {
-            //var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Fit == obj.Fit || c.Color == obj.ClothingColor || c.FabricMaterial == obj.FabricMaterial);
-
-            //List<ClothingInfo> clothingInfos = new List<ClothingInfo>();
-
-            //foreach (var item in list)
-            //{
-            //    if (!string.IsNullOrEmpty(item.Image))
-            //    {
-            //        byte[] imageBytes = Convert.FromBase64String(item.Image);
-            //        BitmapImage bitmap = new BitmapImage();
-            //        bitmap.BeginInit();
-            //        bitmap.StreamSource = new MemoryStream(imageBytes);
-            //        bitmap.EndInit();
-
-            //        clothingInfos.Add(new ClothingInfo
-            //        {
-            //            Type = item.Type,
-            //            Style = item.Style,
-            //            Image = bitmap
-            //        });
-            //    }
-            //}
-
-            //listdata.ItemsSource = clothingInfos;
-            //var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Fit == obj.Fit || c.Color == obj.ClothingColor || c.FabricMaterial == obj.FabricMaterial);
             var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Color == obj.ClothingColor );
 
 

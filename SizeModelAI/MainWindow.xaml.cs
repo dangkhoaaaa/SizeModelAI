@@ -15,132 +15,132 @@ using AForge.Video.DirectShow;
 using AForge.Video;
 using Newtonsoft.Json;
 using SizeModelAI;
+using SizeModelAI.Repo;
 
 namespace SizeModelAI
 {
-	public partial class MainWindow : System.Windows.Window
-	{
+    public partial class MainWindow : System.Windows.Window
+    {
         private VideoCaptureDevice videoCaptureDevice;
         private string saveFolderPath;
         private System.Drawing.Bitmap currentFrame;
+        UnitOfWork unitOfWork = new UnitOfWork();
         public MainWindow()
-		{
-			InitializeComponent();
-			// Check the existence of the haarcascade_fullbody.xml file
-			string cascadeFileName = "haarcascade_fullbody.xml";
-			string cascadeFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cascadeFileName);
+        {
+            InitializeComponent();
+            // Check the existence of the haarcascade_fullbody.xml file
+            string cascadeFileName = "haarcascade_fullbody.xml";
+            string cascadeFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cascadeFileName);
 
-			if (!File.Exists(cascadeFilePath))
-			{
-				string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-				string parentDirectory = Directory.GetParent(baseDirectory).Parent.Parent.Parent.FullName;
-				// Copy the file from the application's root directory
-				string sourceFilePath = Path.Combine(parentDirectory, "haarcascade_fullbody.xml"); // Path to the source file
-				File.Copy(sourceFilePath, cascadeFilePath);
-			}
+            if (!File.Exists(cascadeFilePath))
+            {
+                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string parentDirectory = Directory.GetParent(baseDirectory).Parent.Parent.Parent.FullName;
+                // Copy the file from the application's root directory
+                string sourceFilePath = Path.Combine(parentDirectory, "haarcascade_fullbody.xml"); // Path to the source file
+                File.Copy(sourceFilePath, cascadeFilePath);
+            }
             InitializeWebcam();
         }
 
-		private void LoadImage_Click(object sender, RoutedEventArgs e)
-		{
-			var openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
+        private void LoadImage_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
 
-			if (openFileDialog.ShowDialog() == true)
-			{
-				string filePath = openFileDialog.FileName;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
 
-				// Read the image and convert it to an OpenCV Mat object
-				Mat image = Cv2.ImRead(filePath);
-				// Check the existence of the haarcascade_fullbody.xml file
-				string cascadeFileName = "haarcascade_fullbody.xml";
-				string cascadeFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cascadeFileName);
+                // Read the image and convert it to an OpenCV Mat object
+                Mat image = Cv2.ImRead(filePath);
+                // Check the existence of the haarcascade_fullbody.xml file
+                string cascadeFileName = "haarcascade_fullbody.xml";
+                string cascadeFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, cascadeFileName);
 
-				if (!File.Exists(cascadeFilePath))
-				{
-					MessageBox.Show("haarcascade_fullbody.xml not found. Please make sure the file exists.");
-					return;
-				}
-				// Create a body detector
-				using (var bodyCascade = new CascadeClassifier("haarcascade_fullbody.xml"))
-				{
+                if (!File.Exists(cascadeFilePath))
+                {
+                    MessageBox.Show("haarcascade_fullbody.xml not found. Please make sure the file exists.");
+                    return;
+                }
+                // Create a body detector
+                using (var bodyCascade = new CascadeClassifier("haarcascade_fullbody.xml"))
+                {
 
-					// Detect people in the image
-					OpenCvSharp.Rect[] bodies = bodyCascade.DetectMultiScale(image, 1.1, 3, HaarDetectionTypes.ScaleImage, new OpenCvSharp.Size(30, 30));
+                    // Detect people in the image
+                    OpenCvSharp.Rect[] bodies = bodyCascade.DetectMultiScale(image, 1.1, 3, HaarDetectionTypes.ScaleImage, new OpenCvSharp.Size(30, 30));
 
-					if (bodies.Length > 0)
-					{
-
-
-						// Measure the width and height of the first person in the image
-						OpenCvSharp.Rect firstBody = bodies[0];
-						double personWidth = firstBody.Width;
-						double personHeight = firstBody.Height;
-
-						//MessageBox.Show($"Width of person: {personWidth}, Height of person: {personHeight}");
-						string size;
-						if (personWidth < 50 && personHeight < 150)
-						{
-							size = "S"; // Small size clothes
-						}
-						else if (personWidth < 70 && personHeight < 170)
-						{
-							size = "M"; // Medium size clothes
-						}
-						else if (personWidth < 90 && personHeight < 190)
-						{
-							size = "L"; // Large size clothes
-						}
-						else
-						{
-							size = "XL"; // Extra large size clothes
-						}
-						// Display the image in the Image control
-						// Display the body of the person in the image
-						foreach (var body in bodies)
-						{
-							Cv2.Rectangle(image, body, new Scalar(0, 255, 0), 2);
-						}
-
-						// Display the image in the Image control
-						BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
-						imageView.Source = bitmapSource;
-						MessageBox.Show($"Predicted clothing size: {size}");
-					}
-					else
-					{
-						// If no person is in the image
-						MessageBox.Show("Need Image full Body");
-					}
-				}
-
-				// Free memory after use
-				image.Dispose();
-			}
-		}
+                    if (bodies.Length > 0)
+                    {
 
 
+                        // Measure the width and height of the first person in the image
+                        OpenCvSharp.Rect firstBody = bodies[0];
+                        double personWidth = firstBody.Width;
+                        double personHeight = firstBody.Height;
 
-		private async void LoadImageAI_Click(object sender, RoutedEventArgs e)
-{
-    var openFileDialog = new OpenFileDialog();
-    openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
+                        //MessageBox.Show($"Width of person: {personWidth}, Height of person: {personHeight}");
+                        string size;
+                        if (personWidth < 50 && personHeight < 150)
+                        {
+                            size = "S"; // Small size clothes
+                        }
+                        else if (personWidth < 70 && personHeight < 170)
+                        {
+                            size = "M"; // Medium size clothes
+                        }
+                        else if (personWidth < 90 && personHeight < 190)
+                        {
+                            size = "L"; // Large size clothes
+                        }
+                        else
+                        {
+                            size = "XL"; // Extra large size clothes
+                        }
+                        // Display the image in the Image control
+                        // Display the body of the person in the image
+                        foreach (var body in bodies)
+                        {
+                            Cv2.Rectangle(image, body, new Scalar(0, 255, 0), 2);
+                        }
 
-    if (openFileDialog.ShowDialog() == true)
-    {
-        string filePath = openFileDialog.FileName;
-        byte[] imageData = File.ReadAllBytes(filePath);
+                        // Display the image in the Image control
+                        BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
+                        imageView.Source = bitmapSource;
+                        MessageBox.Show($"Predicted clothing size: {size}");
+                    }
+                    else
+                    {
+                        // If no person is in the image
+                        MessageBox.Show("Need Image full Body");
+                    }
+                }
 
-        // Convert image data to base64
-        string base64Image = Convert.ToBase64String(imageData);
+                // Free memory after use
+                image.Dispose();
+            }
+        }
+
+
+
+        private async void LoadImageAI_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.png;*.jpeg;*.jpg)|*.png;*.jpeg;*.jpg|All files (*.*)|*.*";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filePath = openFileDialog.FileName;
+                byte[] imageData = File.ReadAllBytes(filePath);
+
+                // Convert image data to base64
+                string base64Image = Convert.ToBase64String(imageData);
 
                 CallAPIProcessAsync(base64Image, filePath);
             }
-}
-        //what is picture,please return this JSON: {   \"Type\": \"Shirt\",   " +
-        //        " \"Style\": \"Casual\",    \"Fit\": \"Regular fit\",    \"ClothingColor\":" +
-        //        " example[White, Blue, Black, ....],\"FabricMaterial\": \"Cotton\",    \"Sizes\": [S, M, L,XL]  }
-        private async Task CallAPIProcessAsync(string base64Image,string filePath)
+        }
+
+        private async Task CallAPIProcessAsync(string base64Image, string filePath)
         { // Tạo JSON request
             string questionText = "Is this about a shirt? If so ,provide details such as its type shirt, style shirt, color shirt, fabric material shirt,Sleeve Length shirt, Collar Style shirt";
 
@@ -193,15 +193,16 @@ namespace SizeModelAI
                             }
                         }
                     }
-                    if (result != null && result.Length!=0)
+                    if (result != null && result.Length != 0)
                     {
                         string endresult = await phantichtext(result);
                         // Hiển thị kết quả trả về từ API
                         MessageBox.Show("Answer " + result);
 
 
-                        PreClothing destinationPage = new PreClothing(endresult);
-                        destinationPage.Show();
+                        //PreClothing destinationPage = new PreClothing(endresult);
+                        //destinationPage.Show();
+                        readJson(endresult);
                     }
                     else
                     {
@@ -217,6 +218,115 @@ namespace SizeModelAI
                     MessageBox.Show("An error occurred: " + ex.Message);
                 }
             }
+        }
+
+        private void readJson(string json)
+        {
+            // Loại bỏ dấu ngoặc đơn từ chuỗi JSON
+            json = json.Replace("{", "").Replace("}", "");
+
+            // Tách các cặp key-value thành mảng
+            string[] pairs = json.Split('|');
+
+            // Tạo một đối tượng JsonClothing và gán giá trị cho các thuộc tính
+            JsonClothing clothing = new JsonClothing();
+            foreach (var pair in pairs)
+            {
+                string[] keyValue = pair.Split(':');
+                string key = keyValue[0].Trim();
+                string value = keyValue[1];
+
+                switch (key)
+                {
+                    case "isShirt":
+                        clothing.IsShirt = value;
+                        break;
+                    case "Type":
+                        clothing.Type = value;
+                        break;
+                    case "Style":
+                        clothing.Style = value;
+                        break;
+                    case "Fit":
+                        clothing.Fit = value;
+                        break;
+                    case "ClothingColor":
+                        clothing.ClothingColor = value;
+                        break;
+                    case "FabricMaterial":
+                        clothing.FabricMaterial = value;
+                        break;
+                    case "CollarStyle":
+                        clothing.CollarStyle = value;
+                        break;
+                    case "SleeveLength":
+                        clothing.SleeveLength = value;
+                        break;
+                    case "Sizes":
+                        clothing.Sizes = new List<string> { value };
+                        break;
+                }
+            }
+            if (clothing.IsShirt.Equals("Yes"))
+            {
+                ShowClothingInfo(clothing);
+            }
+            else
+            {
+                MessageBox.Show("This is not Shirt");
+            }
+        }
+        private void ShowClothingInfo(JsonClothing obj)
+        {
+            var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Color == obj.ClothingColor);
+
+
+            List<ClothingInfoWithCount> clothingInfos = new List<ClothingInfoWithCount>();
+
+            foreach (var item in list)
+            {
+                int matchCount = 0;
+
+                if (!string.IsNullOrEmpty(item.Type) && item.Type == obj.Type)
+                    matchCount += 3;
+                if (!string.IsNullOrEmpty(item.Style) && item.Style == obj.Style)
+                    matchCount += 2;
+                //if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
+                //    matchCount++;
+                if (!string.IsNullOrEmpty(item.Color) && item.Color == obj.ClothingColor)
+                    matchCount += 2;
+                //if (!string.IsNullOrEmpty(item.FabricMaterial) && item.FabricMaterial == obj.FabricMaterial)
+                //    matchCount++;
+                if (!string.IsNullOrEmpty(item.CollarStyle) && item.CollarStyle == obj.CollarStyle)
+                    matchCount++;
+                if (!string.IsNullOrEmpty(item.SleeveLength) && item.SleeveLength == obj.SleeveLength)
+                    matchCount++;
+                //if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
+                //    matchCount++;
+                if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
+                    matchCount++;
+                if (matchCount > 3)
+                {
+                    byte[] imageBytes = Convert.FromBase64String(item.Image);
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.StreamSource = new MemoryStream(imageBytes);
+                    bitmap.EndInit();
+
+                    clothingInfos.Add(new ClothingInfoWithCount
+                    {
+                        Type = item.Type,
+                        Style = item.Style,
+                        Image = bitmap,
+                        MatchCount = matchCount
+                    });
+                }
+            }
+
+            // Order by MatchCount in descending order
+            clothingInfos = clothingInfos.OrderByDescending(c => c.MatchCount).ToList();
+
+            listdata.ItemsSource = clothingInfos;
         }
 
         public async Task<string> phantichtext(string context)
@@ -328,7 +438,7 @@ namespace SizeModelAI
         {
             CaptureImage();
         }
-        private string saveFolderPath1 = @"D:\PRN-Application";
+        private string saveFolderPath1 = @"E://Image";
         private async void CaptureImage()
         {
             if (videoCaptureDevice != null && videoCaptureDevice.IsRunning)
