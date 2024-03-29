@@ -22,9 +22,8 @@ public partial class ClothingAssigmentContext : DbContext
     public virtual DbSet<ClothingSize> ClothingSizes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer(GetConnectionString());
-
-
     private string GetConnectionString()
     {
         IConfiguration config = new ConfigurationBuilder()
@@ -34,17 +33,19 @@ public partial class ClothingAssigmentContext : DbContext
         var strConn = config["ConnectionStrings:DefaultConnection"];
         return strConn;
     }
-
-
-protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Clothing>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Clothing__3214EC07E69C633B");
+            entity.HasKey(e => e.Id).HasName("PK__Clothing__3214EC0730623992");
 
             entity.ToTable("Clothing");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CollarStyle)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("Collar_style");
             entity.Property(e => e.Color)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -55,6 +56,10 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.Image).IsUnicode(false);
+            entity.Property(e => e.SleeveLength)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("Sleeve_length");
             entity.Property(e => e.Style)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -75,7 +80,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 
             entity.HasOne(d => d.Clothing).WithMany()
                 .HasForeignKey(d => d.ClothingId)
-                .HasConstraintName("FK__ClothingS__Cloth__4AB81AF0");
+                .HasConstraintName("FK__ClothingS__Cloth__38996AB5");
         });
 
         OnModelCreatingPartial(modelBuilder);

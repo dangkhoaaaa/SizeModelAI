@@ -85,7 +85,7 @@ namespace SizeModelAI
                 MessageBox.Show("This is not Shirt");
             }
         }
-
+        
 
         private void ShowClothingInfo(JsonClothing obj)
         {

@@ -17,5 +17,9 @@ public partial class Clothing
 
     public string? Color { get; set; }
 
+    public string? SleeveLength { get; set; }
+
+    public string? CollarStyle { get; set; }
+
     public string? Image { get; set; }
 }

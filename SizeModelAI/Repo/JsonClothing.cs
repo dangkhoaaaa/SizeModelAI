@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -17,6 +18,8 @@ namespace SizeModelAI.Repo
         public string Fit { get; set; }
         public string ClothingColor { get; set; }
         public string FabricMaterial { get; set; }
+        public string Sleeve_length { get; set; }
+        public string Collar_style { get; set; }
         public List<string> Sizes { get; set; }
     }
 
