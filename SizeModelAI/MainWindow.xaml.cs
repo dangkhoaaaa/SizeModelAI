@@ -142,8 +142,7 @@ namespace SizeModelAI
         //        " example[White, Blue, Black, ....],\"FabricMaterial\": \"Cotton\",    \"Sizes\": [S, M, L,XL]  }
         private async Task CallAPIProcessAsync(string base64Image,string filePath)
         { // Tạo JSON request
-            string questionText = "what is picture,please return only this formar " +
-                "  only formar this {isShirt:Yes/No|Type:Shirt|Style:Casua|Fit:Regularfit|ClothingColor:White|FabricMaterial:Cotton|Sizes:S}\r\n";
+            string questionText = "Is this about a shirt? If so ,provide details such as its type shirt, style shirt, color shirt, fabric material shirt,Sleeve Length shirt, Collar Style shirt";
 
             string jsonRequest = @"{
                 ""contents"":[
@@ -161,7 +160,81 @@ namespace SizeModelAI
                 ]
             }";
 
-            string apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=AIzaSyArVfvy9rHMaUh7_nOwkruwRTGh8abbQJY";
+            string apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=AIzaSyBFYpDjeTDYwBHu-L40Hv48o-eCVBRN6Kw";
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    var response = await httpClient.PostAsync(apiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    JObject jsonResponse = JObject.Parse(responseBody);
+                    JArray candidates = (JArray)jsonResponse["candidates"];
+                    string result = "";
+
+                    foreach (JToken candidate in candidates)
+                    {
+                        JToken content = candidate["content"];
+                        if (content != null)
+                        {
+                            JArray parts = (JArray)content["parts"];
+                            if (parts != null && parts.Count > 0)
+                            {
+                                foreach (JToken part in parts)
+                                {
+                                    string text = (string)part["text"];
+                                    if (text != null)
+                                    {
+                                        result = text;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (result != null && result.Length!=0)
+                    {
+                        string endresult = await phantichtext(result);
+                        // Hiển thị kết quả trả về từ API
+                        MessageBox.Show("Answer " + result);
+
+
+                        PreClothing destinationPage = new PreClothing(endresult);
+                        destinationPage.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Dont Detect Image, Plz try Again");
+                    }
+                    // Hiển thị ảnh đã chụp lên giao diện người dùng
+                    Mat image = Cv2.ImRead(filePath);
+                    BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
+                    imageView.Source = bitmapSource;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred: " + ex.Message);
+                }
+            }
+        }
+
+        public async Task<string> phantichtext(string context)
+        {
+
+            string questionText = "Please convert this context[" + context + "] to the specified format {isShirt:Yes/No|Type:Shirt|Style:Casual|Fit:Regularfit|ClothingColor:White|SleeveLength:Short sleeve|CollarStyle:Polo collar|FabricMaterial:Cotton|Sizes:S}";
+
+            string jsonRequest = @"{
+                ""contents"":[
+                    {
+                        ""parts"":[
+                            {""text"": """ + questionText + @"""}
+                        ]
+                    }
+                ]
+            }";
+
+            string apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyBFYpDjeTDYwBHu-L40Hv48o-eCVBRN6Kw";
             using (var httpClient = new HttpClient())
             {
                 try
@@ -196,22 +269,11 @@ namespace SizeModelAI
                     }
 
                     // Hiển thị kết quả trả về từ API
-                    MessageBox.Show("Answer " + result);
-
-                   
-                    PreClothing destinationPage = new PreClothing(result);
-                    destinationPage.Show();
-                    // Hiển thị ảnh đã chụp lên giao diện người dùng
-                    Mat image = Cv2.ImRead(filePath);
-                    BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
-                    imageView.Source = bitmapSource;
+                    MessageBox.Show("text " + result);
+                    return result;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("An error occurred: " + ex.Message);
-                }
-            }
-        }
+                catch { return null; }
+            } }
         private void InitializeWebcam()
         {
             FilterInfoCollection videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
