@@ -3,6 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    WindowStartupLocation="Manual"
         Title="Clothing Size Prediction" Height="450" Width="800">
     <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/pexels-tembela-bohle-1884584.jpg"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35*"/>
             <!-- 40% cho camera và nút chụp/ tải ảnh -->
@@ -20,12 +23,12 @@
             </Grid.RowDefinitions>
 
             <!-- Camera -->
-            <Image x:Name="imageControl" Stretch="Uniform" Grid.Row="0"/>
+            <Image x:Name="imageControl" Stretch="Uniform" Grid.Row="0" OpacityMask="#FFEDCECE"/>
 
             <!-- Nút chụp/ tải ảnh -->
             <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                <Button Content="Chụp ảnh" Click="CaptureButton_Click" Margin="0,0,0,10" Width="139"/>
-                <Button Content="Tải ảnh từ máy" Click="LoadImageAI_Click" Width="141"/>
+                <Button Content="Chụp ảnh" Click="CaptureButton_Click" Margin="0,0,0,10" Width="149" Height="40"/>
+                <Button Content="Tải ảnh từ máy" Click="LoadImageAI_Click" Width="146" Height="39"/>
             </StackPanel>
         </Grid>
 
@@ -40,6 +43,12 @@
 
             <!-- Ảnh snapshot nhỏ và thông tin -->
             <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <StackPanel.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFFFEB16"/>
+                        <GradientStop Color="#FF76EA92" Offset="1"/>
+                    </LinearGradientBrush>
+                </StackPanel.Background>
                 <Image x:Name="imageView" Stretch="Uniform" Width="Auto" Height="Auto" VerticalAlignment="Center"/>
                 <!-- Thông tin -->
                 <TextBlock Text="Thông tin ở đây" VerticalAlignment="Center"/>
@@ -48,7 +57,10 @@
             <!-- ListView -->
             <ListView Grid.Row="1" x:Name="imageListView">
                 <ListView.Background>
-                    <ImageBrush/>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF49FF4B"/>
+                        <GradientStop Color="#FFF9FF88" Offset="1"/>
+                    </LinearGradientBrush>
                 </ListView.Background>
                 <ListView.View>
                     <GridView>
