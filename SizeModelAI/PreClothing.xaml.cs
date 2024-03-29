@@ -113,7 +113,9 @@ namespace SizeModelAI
             //}
 
             //listdata.ItemsSource = clothingInfos;
-            var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Fit == obj.Fit || c.Color == obj.ClothingColor || c.FabricMaterial == obj.FabricMaterial);
+            //var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Fit == obj.Fit || c.Color == obj.ClothingColor || c.FabricMaterial == obj.FabricMaterial);
+            var list = unitOfWork.ClothingRepository.Get(filter: c => c.Type == obj.Type || c.Style == obj.Style || c.Color == obj.ClothingColor );
+
 
             List<ClothingInfoWithCount> clothingInfos = new List<ClothingInfoWithCount>();
 
@@ -125,12 +127,12 @@ namespace SizeModelAI
                     matchCount++;
                 if (!string.IsNullOrEmpty(item.Style) && item.Style == obj.Style)
                     matchCount++;
-                if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
-                    matchCount++;
+                //if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
+                //    matchCount++;
                 if (!string.IsNullOrEmpty(item.Color) && item.Color == obj.ClothingColor)
                     matchCount++;
-                if (!string.IsNullOrEmpty(item.FabricMaterial) && item.FabricMaterial == obj.FabricMaterial)
-                    matchCount++;
+                //if (!string.IsNullOrEmpty(item.FabricMaterial) && item.FabricMaterial == obj.FabricMaterial)
+                //    matchCount++;
 
                 if (matchCount > 0)
                 {
