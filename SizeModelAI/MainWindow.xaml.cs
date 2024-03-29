@@ -1,21 +1,16 @@
-﻿using System;
+﻿using AForge.Video;
+using AForge.Video.DirectShow;
+using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
+using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
+using SizeModelAI.Repo;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
-using System.Threading.Tasks;
-using OpenCvSharp;
-using OpenCvSharp.Extensions;
-using OpenCvSharp.WpfExtensions;
-using Newtonsoft.Json.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using AForge.Video.DirectShow;
-using AForge.Video;
-using Newtonsoft.Json;
-using SizeModelAI;
-using SizeModelAI.Repo;
 
 namespace SizeModelAI
 {
@@ -107,7 +102,7 @@ namespace SizeModelAI
                         // Display the image in the Image control
                         BitmapSource bitmapSource = BitmapSourceConverter.ToBitmapSource(image);
                         imageView.Source = bitmapSource;
-                        MessageBox.Show($"Predicted clothing size: {size}");
+                        //MessageBox.Show($"Predicted clothing size: {size}");
                     }
                     else
                     {
@@ -197,7 +192,7 @@ namespace SizeModelAI
                     {
                         string endresult = await phantichtext(result);
                         // Hiển thị kết quả trả về từ API
-                        MessageBox.Show("Answer " + result);
+                        //MessageBox.Show("Answer " + result);
 
 
                         //PreClothing destinationPage = new PreClothing(endresult);
@@ -269,6 +264,7 @@ namespace SizeModelAI
             }
             if (clothing.IsShirt.Equals("Yes"))
             {
+                textInfo.Text = "Color: "+ clothing.ClothingColor + "\nType: " + clothing.Type + "\nStyle: " + clothing.Style;
                 ShowClothingInfo(clothing);
             }
             else
@@ -379,7 +375,7 @@ namespace SizeModelAI
                     }
 
                     // Hiển thị kết quả trả về từ API
-                    MessageBox.Show("text " + result);
+                    //MessageBox.Show("text " + result);
                     return result;
                 }
                 catch { return null; }
@@ -449,7 +445,7 @@ namespace SizeModelAI
                     string filePath = Path.Combine(saveFolderPath1, fileName);
 
                     currentFrame.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    MessageBox.Show($"Ảnh đã được chụp và lưu tại {filePath}");
+                    //MessageBox.Show($"Ảnh đã được chụp và lưu tại {filePath}");
 
                     // Đọc dữ liệu ảnh đã chụp
                     byte[] imageData = File.ReadAllBytes(filePath);

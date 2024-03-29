@@ -25,14 +25,14 @@ namespace SizeModelAI
     {
 
         UnitOfWork unitOfWork = new UnitOfWork();
-        public PreClothing(string json)
+        public PreClothing()
         {
             InitializeComponent();
-
+            string json = "helo helo";
             // Loại bỏ dấu ngoặc đơn từ chuỗi JSON
-            json = json.Replace("{", "").Replace("}", "");
+            //json = json.Replace("{", "").Replace("}", "");
 
-            // Tách các cặp key-value thành mảng
+            //// Tách các cặp key-value thành mảng
             string[] pairs = json.Split('|');
 
             // Tạo một đối tượng JsonClothing và gán giá trị cho các thuộc tính
