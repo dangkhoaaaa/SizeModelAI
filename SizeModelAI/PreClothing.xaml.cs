@@ -63,6 +63,12 @@ namespace SizeModelAI
                     case "FabricMaterial":
                         clothing.FabricMaterial = value;
                         break;
+                    case "CollarStyle":
+                        clothing.CollarStyle = value;
+                        break;
+                    case "SleeveLength":
+                        clothing.SleeveLength = value;
+                        break;
                     case "Sizes":
                         clothing.Sizes = new List<string> { value };
                         break;
@@ -124,17 +130,24 @@ namespace SizeModelAI
                 int matchCount = 0;
 
                 if (!string.IsNullOrEmpty(item.Type) && item.Type == obj.Type)
-                    matchCount++;
+                    matchCount+=3;
                 if (!string.IsNullOrEmpty(item.Style) && item.Style == obj.Style)
-                    matchCount++;
+                    matchCount += 2;
                 //if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
                 //    matchCount++;
                 if (!string.IsNullOrEmpty(item.Color) && item.Color == obj.ClothingColor)
-                    matchCount++;
+                    matchCount += 2;
                 //if (!string.IsNullOrEmpty(item.FabricMaterial) && item.FabricMaterial == obj.FabricMaterial)
                 //    matchCount++;
-
-                if (matchCount > 0)
+                if (!string.IsNullOrEmpty(item.CollarStyle) && item.CollarStyle == obj.CollarStyle)
+                    matchCount++;
+                if (!string.IsNullOrEmpty(item.SleeveLength) && item.SleeveLength == obj.SleeveLength)
+                    matchCount++;
+                //if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
+                //    matchCount++;
+                if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
+                    matchCount++;
+                if (matchCount > 3)
                 {
                     byte[] imageBytes = Convert.FromBase64String(item.Image);
                     BitmapImage bitmap = new BitmapImage();

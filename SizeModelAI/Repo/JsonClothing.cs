@@ -18,8 +18,8 @@ namespace SizeModelAI.Repo
         public string Fit { get; set; }
         public string ClothingColor { get; set; }
         public string FabricMaterial { get; set; }
-        public string Sleeve_length { get; set; }
-        public string Collar_style { get; set; }
+        public string SleeveLength { get; set; }
+        public string CollarStyle { get; set; }
         public List<string> Sizes { get; set; }
     }
 
