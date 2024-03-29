@@ -193,6 +193,18 @@ namespace SizeModelAI
                             }
                         }
                     }
+                 
+                          if (result == null || result.Length == 0)
+                    {
+                        result = await chuyendoiHInhanh(base64Image, filePath, "Is this about a shirt? If yes ,provide details such as its type shirt, style shirt, color shirt");
+                    }
+                    if (result == null || result.Length == 0)
+                    {
+                        result = await chuyendoiHInhanh(base64Image, filePath, "Is this about a shirt? If yes ,description it");
+                    }
+                  
+
+
                     if (result != null && result.Length != 0)
                     {
                         string endresult = await phantichtext(result);
@@ -222,8 +234,15 @@ namespace SizeModelAI
 
         private void readJson(string json)
         {
-            // Loại bỏ dấu ngoặc đơn từ chuỗi JSON
-            json = json.Replace("{", "").Replace("}", "");
+            // Check if the JSON string contains curly braces {}
+            if (json.Contains("{") && json.Contains("}"))
+            {
+                // Remove the curly braces from the JSON string
+                json = json.Replace("{", "").Replace("}", "");
+
+                // Further processing
+                // Your code logic here
+            }
 
             // Tách các cặp key-value thành mảng
             string[] pairs = json.Split('|');
@@ -305,7 +324,7 @@ namespace SizeModelAI
                 //    matchCount++;
                 if (!string.IsNullOrEmpty(item.Fit) && item.Fit == obj.Fit)
                     matchCount++;
-                if (matchCount > 3)
+                if (matchCount >= 5)
                 {
                     byte[] imageBytes = Convert.FromBase64String(item.Image);
                     BitmapImage bitmap = new BitmapImage();
@@ -332,7 +351,7 @@ namespace SizeModelAI
         public async Task<string> phantichtext(string context)
         {
 
-            string questionText = "Please convert this context[" + context + "] to the specified format {isShirt:Yes/No|Type:Shirt|Style:Casual|Fit:Regularfit|ClothingColor:White|SleeveLength:Short sleeve|CollarStyle:Polo collar|FabricMaterial:Cotton|Sizes:S}";
+            string questionText = "Please convert this context[" + context + "]  to the specified format {isShirt:Yes/No|Type:Shirt|Style:Casual|Fit:Regularfit|ClothingColor:White|SleeveLength:Short sleeve|CollarStyle:Polo collar|FabricMaterial:Cotton|Sizes:S}";
 
             string jsonRequest = @"{
                 ""contents"":[
@@ -384,6 +403,70 @@ namespace SizeModelAI
                 }
                 catch { return null; }
             } }
+
+        private async Task<string> chuyendoiHInhanh(string base64Image, string filePath,string quest)
+        { // Tạo JSON request
+            string questionText = quest;
+
+            string jsonRequest = @"{
+                ""contents"":[
+                    {
+                        ""parts"":[
+                            {""text"": """ + questionText + @"""},
+                            {
+                                ""inline_data"": {
+                                    ""mime_type"":""image/jpeg"",
+                                    ""data"": """ + base64Image + @"""
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }";
+
+            string apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=AIzaSyBFYpDjeTDYwBHu-L40Hv48o-eCVBRN6Kw";
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    var response = await httpClient.PostAsync(apiUrl, new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    JObject jsonResponse = JObject.Parse(responseBody);
+                    JArray candidates = (JArray)jsonResponse["candidates"];
+                    string result = "";
+
+                    foreach (JToken candidate in candidates)
+                    {
+                        JToken content = candidate["content"];
+                        if (content != null)
+                        {
+                            JArray parts = (JArray)content["parts"];
+                            if (parts != null && parts.Count > 0)
+                            {
+                                foreach (JToken part in parts)
+                                {
+                                    string text = (string)part["text"];
+                                    if (text != null)
+                                    {
+                                        result = text;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred: " + ex.Message);
+                    return null;
+                }
+            }
+        }
+
         private void InitializeWebcam()
         {
             FilterInfoCollection videoDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
