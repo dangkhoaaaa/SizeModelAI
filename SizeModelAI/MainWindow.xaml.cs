@@ -229,66 +229,73 @@ namespace SizeModelAI
 
         private void readJson(string json)
         {
-            // Check if the JSON string contains curly braces {}
-            if (json.Contains("{") && json.Contains("}"))
+            if(json == null)
             {
-                // Remove the curly braces from the JSON string
-                json = json.Replace("{", "").Replace("}", "");
-
-                // Further processing
-                // Your code logic here
-            }
-
-            // Tách các cặp key-value thành mảng
-            string[] pairs = json.Split('|');
-
-            // Tạo một đối tượng JsonClothing và gán giá trị cho các thuộc tính
-            JsonClothing clothing = new JsonClothing();
-            foreach (var pair in pairs)
-            {
-                string[] keyValue = pair.Split(':');
-                string key = keyValue[0].Trim();
-                string value = keyValue[1];
-
-                switch (key)
-                {
-                    case "isShirt":
-                        clothing.IsShirt = value;
-                        break;
-                    case "Type":
-                        clothing.Type = value;
-                        break;
-                    case "Style":
-                        clothing.Style = value;
-                        break;
-                    case "Fit":
-                        clothing.Fit = value;
-                        break;
-                    case "ClothingColor":
-                        clothing.ClothingColor = value;
-                        break;
-                    case "FabricMaterial":
-                        clothing.FabricMaterial = value;
-                        break;
-                    case "CollarStyle":
-                        clothing.CollarStyle = value;
-                        break;
-                    case "SleeveLength":
-                        clothing.SleeveLength = value;
-                        break;
-                    case "Sizes":
-                        clothing.Sizes = new List<string> { value };
-                        break;
-                }
-            }
-            if (clothing.IsShirt.Equals("Yes"))
-            {
-                textInfo.Text = "Color: "+ clothing.ClothingColor + "\nType: " + clothing.Type + "\nStyle: " + clothing.Style;
-                ShowClothingInfo(clothing);
+                MessageBox.Show("Dont Detect Image, Plz try Again");
             }
             else
             {
-                MessageBox.Show("This is not Shirt");
+                // Check if the JSON string contains curly braces {}
+                if (json.Contains("{") && json.Contains("}"))
+                {
+                    // Remove the curly braces from the JSON string
+                    json = json.Replace("{", "").Replace("}", "");
+
+                    // Further processing
+                    // Your code logic here
+                }
+
+                // Tách các cặp key-value thành mảng
+                string[] pairs = json.Split('|');
+
+                // Tạo một đối tượng JsonClothing và gán giá trị cho các thuộc tính
+                JsonClothing clothing = new JsonClothing();
+                foreach (var pair in pairs)
+                {
+                    string[] keyValue = pair.Split(':');
+                    string key = keyValue[0].Trim();
+                    string value = keyValue[1];
+
+                    switch (key)
+                    {
+                        case "isShirt":
+                            clothing.IsShirt = value;
+                            break;
+                        case "Type":
+                            clothing.Type = value;
+                            break;
+                        case "Style":
+                            clothing.Style = value;
+                            break;
+                        case "Fit":
+                            clothing.Fit = value;
+                            break;
+                        case "ClothingColor":
+                            clothing.ClothingColor = value;
+                            break;
+                        case "FabricMaterial":
+                            clothing.FabricMaterial = value;
+                            break;
+                        case "CollarStyle":
+                            clothing.CollarStyle = value;
+                            break;
+                        case "SleeveLength":
+                            clothing.SleeveLength = value;
+                            break;
+                        case "Sizes":
+                            clothing.Sizes = new List<string> { value };
+                            break;
+                    }
+                }
+                if (clothing.IsShirt.Equals("Yes"))
+                {
+                    textInfo.Text = "Color: " + clothing.ClothingColor + "\nType: " + clothing.Type + "\nStyle: " + clothing.Style;
+                    ShowClothingInfo(clothing);
+                }
+                else
+                {
+                    MessageBox.Show("This is not Shirt");
+                }
             }
         }
         private void ShowClothingInfo(JsonClothing obj)
