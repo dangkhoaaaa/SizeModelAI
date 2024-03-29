@@ -1,8 +1,12 @@
 ﻿<Window x:Class="SizeModelAI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    WindowStartupLocation="Manual"
-        Title="Clothing Size Prediction" Height="450" Width="800">
+        Title="Clothing Size Prediction" Height="1080" Width="1920"
+        WindowStyle="ToolWindow" ResizeMode="NoResize" WindowState="Maximized">
     <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/pexels-tembela-bohle-1884584.jpg"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="35*"/>
             <!-- 40% cho camera và nút chụp/ tải ảnh -->
@@ -20,12 +24,31 @@
             </Grid.RowDefinitions>
 
             <!-- Camera -->
-            <Image x:Name="imageControl" Stretch="Uniform" Grid.Row="0"/>
+            <Image x:Name="imageControl" Stretch="Uniform" Grid.Row="0" OpacityMask="#FFEDCECE"/>
 
             <!-- Nút chụp/ tải ảnh -->
             <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                <Button Content="Chụp ảnh" Click="CaptureButton_Click" Margin="0,0,0,10" Width="139"/>
-                <Button Content="Tải ảnh từ máy" Click="LoadImageAI_Click" Width="141"/>
+                <Button Content="Chụp ảnh" Click="CaptureButton_Click" FontFamily="Cooper Black" Margin="0,0,0,10" Width="567" Height="134" FontSize="40">
+                    <Button.Effect>
+                        <DropShadowEffect/>
+                    </Button.Effect>
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFEC6771" Offset="1"/>
+                            <GradientStop Color="#FFFFE432" Offset="0"/>
+                            <GradientStop Color="#FFFF894C" Offset="0.905"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button Content="Tải ảnh từ máy" Click="LoadImageAI_Click" FontFamily="Cooper Black" Width="565" Height="116" FontSize="40">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF00BAD2" Offset="1"/>
+                            <GradientStop Color="#FF65FF00" Offset="0"/>
+                            <GradientStop Color="#FF29D67C" Offset="0.477"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -41,14 +64,26 @@
             <!-- Ảnh snapshot nhỏ và thông tin -->
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <Image x:Name="imageView" Stretch="Uniform" Width="Auto" Height="Auto" VerticalAlignment="Center"/>
+                <TextBlock Text="Thông tin ở đây" FontFamily="Cooper Black" FontSize="30" Width="1158">
+                    <TextBlock.Background>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFFFEFB5"/>
+                            <GradientStop Color="#FFFDFF00" Offset="1"/>
+                            <GradientStop Color="#FFEDE84B" Offset="0.549"/>
+                        </LinearGradientBrush>
+                    </TextBlock.Background>
+                </TextBlock>
                 <!-- Thông tin -->
-                <TextBlock Text="Thông tin ở đây" VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- ListView -->
-            <ListView Grid.Row="1" x:Name="imageListView">
+            <ListView Grid.Row="1" x:Name="imageListView" FontSize="20">
                 <ListView.Background>
-                    <ImageBrush/>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF49FF4B"/>
+                        <GradientStop Color="#FFF9FF88" Offset="1"/>
+                        <GradientStop Color="#FF9FFF68" Offset="0.779"/>
+                    </LinearGradientBrush>
                 </ListView.Background>
                 <ListView.View>
                     <GridView>
