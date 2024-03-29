@@ -82,6 +82,7 @@
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                         <GradientStop Color="#FF49FF4B"/>
                         <GradientStop Color="#FFF9FF88" Offset="1"/>
+                        <GradientStop Color="#FF9FFF68" Offset="0.779"/>
                     </LinearGradientBrush>
                 </ListView.Background>
                 <ListView.View>
